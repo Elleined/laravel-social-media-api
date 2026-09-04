@@ -15,11 +15,8 @@ class UserController extends Controller
         $page = $request->integer('page', 1);
         $perPage = $request->integer('per_page', 10);
         $status = $request->has('status') ? $request->boolean('status') : null;
-        $search = $request->has('search') ? $request->string('search') : null;
 
-    
-        return User::query()
-        
+        return User::withTrashed()
             ->when($status === false, fn ($query) => $query->onlyTrashed())
             ->paginate($perPage, ['*'], 'page', $page);
     }
