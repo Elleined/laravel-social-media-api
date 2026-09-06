@@ -12,10 +12,9 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Emoji query()
  * @mixin \Eloquent
  */
-class Emoji extends Model
+class ProviderType extends Model
 {
-    /** @use HasFactory<\Database\Factories\Emoji> */
     use HasFactory, HasUuids;
 
-    protected $table = 'ref_emojis';
+    protected $table = 'ref_provider_types';
 }

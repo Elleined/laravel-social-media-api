@@ -8,13 +8,29 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+/**
+ * @property string $id
+ * @property \Illuminate\Support\Carbon $created_at
+ * @property string $emoji_id
+ * @property string $reactor_id
+ * @property string $post_id
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Post> $reactions
+ * @property-read int|null $reactions_count
+ * @method static \Database\Factories\PostReactionFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PostReaction newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PostReaction newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PostReaction query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PostReaction whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PostReaction whereEmojiId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PostReaction whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PostReaction wherePostId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PostReaction whereReactorId($value)
+ * @mixin \Eloquent
+ */
 class PostReaction extends Model
 {
     /** @use HasFactory<\Database\Factories\PostReactionFactory> */
     use HasFactory, HasUuids;
 
-
-    public function reactions(): BelongsToMany {
-        return $this->belongsToMany(Post::class, 'comment_id');
-    }
+    public $timestamps = false;
 }

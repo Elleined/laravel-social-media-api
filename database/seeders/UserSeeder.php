@@ -2,9 +2,13 @@
 
 namespace Database\Seeders;
 
+use App\Models\Comment;
+use App\Models\Emoji;
+use App\Models\Post;
+use App\Models\PostReaction;
+use App\Models\SocialUser;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class UserSeeder extends Seeder
 {
@@ -13,6 +17,6 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory(50)->create();
+        User::factory(30)->create();
     }
 }

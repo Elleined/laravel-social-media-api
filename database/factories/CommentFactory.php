@@ -23,8 +23,8 @@ class CommentFactory extends Factory
             'content' => fake()->paragraph(),
             'attachment'=> fake()->optional()->word(),
             'deleted_at' => fake()->optional()->date(),
-            'author_id' => User::factory(),
-            'post_id' => Post::factory()
+            'author_id' => User::query()->pluck('id')->random(),
+            'post_id' => Post::query()->pluck('id')->random()
         ];
     }
 }

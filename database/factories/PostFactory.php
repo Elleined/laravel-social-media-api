@@ -19,10 +19,11 @@ class PostFactory extends Factory
     public function definition(): array
     {
         return [
+            'title' => fake()->sentence(),
             'content' => fake()->paragraph(),
             'attachment'=> fake()->optional()->word(),
             'deleted_at' => fake()->optional()->date(),
-            'author_id' => User::factory()
+            'author_id' => User::query()->pluck('id')->random()
         ];
     }
 }
