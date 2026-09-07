@@ -38,22 +38,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post withTrashed(bool $withTrashed = true)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post withoutTrashed()
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Comment> $comments
+ * @property-read int|null $comments_count
  * @mixin \Eloquent
  */
 class Post extends Model
 {
     /** @use HasFactory<\Database\Factories\PostFactory> */
     use HasFactory, HasUuids, SoftDeletes;
-
-    public function author() : BelongsTo {
-        return $this->belongsTo(User::class, 'author_id');
-    }
-
-    public function comments(): HasMany {
-        return $this->hasMany(Comment::class, 'post_id');
-    }
-
-    public function reactions(): BelongsToMany {
-        return $this->belongsToMany(PostReaction::class, 'post_id');
-    }
 }

@@ -31,8 +31,4 @@ class SocialUser extends Model
     use HasFactory, HasUuids;
 
     public $timestamps = false;
-
-    public function user() : BelongsTo {
-        return $this->belongsTo(User::class, 'user_id');
-    }
 }

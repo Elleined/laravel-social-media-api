@@ -43,17 +43,4 @@ class Comment extends Model
 {
     /** @use HasFactory<\Database\Factories\CommentFactory> */
     use HasFactory, HasUuids, SoftDeletes;
-
-
-    public function post(): BelongsTo {
-        return $this->belongsTo(Post::class, 'post_id');
-    }
-
-    public function author(): BelongsTo {
-        return $this->belongsTo(User::class, 'author_id');
-    }
-
-    public function reactions(): BelongsToMany {
-        return $this->belongsToMany(CommentReaction::class, 'comment_id');
-    }
 }

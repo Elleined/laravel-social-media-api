@@ -67,19 +67,4 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-
-    public function posts(): HasMany
-    {
-        return $this->hasMany(Post::class, 'author_id')->chaperone();
-    }
-
-    public function socials(): HasMany
-    {
-        return $this->hasMany(SocialUser::class, 'user_id')->chaperone();
-    }
-
-    public function comments(): HasManyThrough
-    {
-        return $this->hasManyThrough(Comment::class, 'author_id');
-    }
 }
