@@ -23,7 +23,7 @@ class PostFactory extends Factory
             'content' => fake()->paragraph(),
             'attachment'=> fake()->optional()->word(),
             'deleted_at' => fake()->optional()->date(),
-            'author_id' => User::query()->pluck('id')->random()
+            'author_id' => User::query()->withTrashed()->pluck('id')->random()
         ];
     }
 }
