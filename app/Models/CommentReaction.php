@@ -32,4 +32,8 @@ class CommentReaction extends Model
     use HasFactory, HasUuids;
 
     public $timestamps = false;
+
+    protected $hidden = ['created_at'];
+
+    protected $fillable = ['emoji_id', 'reactor_id', 'comment_id'];
 }

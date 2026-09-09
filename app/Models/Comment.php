@@ -45,11 +45,7 @@ class Comment extends Model
     /** @use HasFactory<\Database\Factories\CommentFactory> */
     use HasFactory, HasUuids, SoftDeletes;
 
-    public function author(): BelongsTo {
-        return $this->belongsTo(User::class, 'author_id');
-    }
+    protected $hidden = ['created_at', 'updated_at', 'deleted_at'];
 
-    public function reactions(): HasMany {
-        return $this->hasMany(CommentReaction::class, 'comment_id');
-    }
+    protected $fillable = ['content', 'attachment', 'deleted_at', 'post_id', 'author_id'];
 }

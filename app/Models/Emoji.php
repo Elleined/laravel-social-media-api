@@ -26,4 +26,6 @@ class Emoji extends Model
     use HasFactory, HasUuids;
 
     protected $table = 'ref_emojis';
+
+    protected $hidden = ['created_at', 'updated_at'];
 }

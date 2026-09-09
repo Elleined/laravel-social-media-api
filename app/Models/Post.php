@@ -47,16 +47,7 @@ class Post extends Model
     /** @use HasFactory<\Database\Factories\PostFactory> */
     use HasFactory, HasUuids, SoftDeletes;
 
+    protected $hidden = ['created_at', 'updated_at', 'deleted_at'];
 
-    public function comments(): HasMany {
-        return $this->hasMany(Comment::class, 'post_id');
-    }
-
-    public function author(): BelongsTo {
-        return $this->belongsTo(User::class, 'author_id');
-    }
-
-    public function reactions(): HasMany {
-        return $this->hasMany(PostReaction::class, 'post_id');
-    }
+    protected $fillable = ['title', 'content', 'attachment', 'author_id', 'deleted_at'];
 }
