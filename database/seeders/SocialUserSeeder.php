@@ -2,7 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\ProviderType;
 use App\Models\SocialUser;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -13,6 +15,16 @@ class SocialUserSeeder extends Seeder
      */
     public function run(): void
     {
-        SocialUser::factory(10)->create();
+        $providerTypes = ProviderType::query()->pluck('id');
+        $usersWithoutPassword = User::query()->withTrashed()->whereNull('password')->pluck('id')->all();
+
+        $socialUsers = array_map(fn($id) => [
+            'provider_type_id' => $providerTypes->random(),
+            'provider_id'      => fake()->uuid(),
+            'user_id'          => $id,
+            'created_at'       => now()   
+        ], $usersWithoutPassword);
+    
+        SocialUser::insert($socialUsers);
     }
 }
