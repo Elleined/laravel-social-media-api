@@ -54,7 +54,7 @@ class User extends Authenticatable
 
     protected $fillable = ['first_name', 'last_name', 'email', 'password', 'attachment'];
 
-    protected $hidden = ['password', 'created_at', 'updated_at', 'deleted_ata'];
+    protected $hidden = ['password', 'created_at', 'updated_at', 'deleted_at'];
 
     /**
      * Get the attributes that should be cast.
@@ -66,5 +66,9 @@ class User extends Authenticatable
         return [
             'password' => 'hashed',
         ];
+    }
+
+    public function posts(): HasMany {
+        return $this->hasMany(Post::class, 'author_id');
     }
 }
