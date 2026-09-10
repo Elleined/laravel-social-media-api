@@ -2,11 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Comment;
-use App\Models\Emoji;
-use App\Models\Post;
-use App\Models\PostReaction;
-use App\Models\SocialUser;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 

@@ -1,10 +1,13 @@
 <?php
 
+use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ReferenceController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('', fn () => 'pong');
+
+Route::post('/login', [LoginController::class, 'login']);
 
 Route::prefix('users')->controller(UserController::class)->group(function () {
     Route::get('', 'index');

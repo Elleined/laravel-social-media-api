@@ -29,7 +29,7 @@ class UserRequest extends FormRequest
             'last_name' => ['required', 'string', 'max:50'],
             'email' => ['required', 'string', 'max:50', 'ends_with:@gmail.com', 'unique:users,email'],
             'password' => ['sometimes', 'string', Password::min(8)
-                ->max(256)
+                ->max(100)
                 ->letters()
                 ->mixedCase()
                 ->numbers()
