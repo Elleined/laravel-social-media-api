@@ -20,6 +20,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        FormRequest::failOnUnknownFields(); // Reject unknown fields
+        FormRequest::failOnUnknownFields(); // Reject all unknown fields
     }
 }

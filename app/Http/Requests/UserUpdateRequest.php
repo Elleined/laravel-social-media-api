@@ -4,10 +4,10 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Password;
+use Illuminate\Validation\Rule;
 use Override;
 
-class UserRequest extends FormRequest
+class UserUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,16 +25,9 @@ class UserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name' => ['required', 'string', 'max:50'],
-            'last_name' => ['required', 'string', 'max:50'],
-            'email' => ['required', 'string', 'max:50', 'ends_with:@gmail.com', 'unique:users,email'],
-            'password' => ['sometimes', 'string', Password::min(8)
-                ->max(256)
-                ->letters()
-                ->mixedCase()
-                ->numbers()
-                ->symbols()
-                ->uncompromised()],
+            'first_name' => ['sometimes', 'string', 'max:50'],
+            'last_name' => ['sometimes', 'string', 'max:50'],
+            'email' => ['sometimes', 'string', 'max:50', 'ends_with:@gmail.com', Rule::unique('users', 'email')->ignore($this->route('user'), 'id')],
             'attachment' => ['sometimes', 'string', 'max:100', 'url'],
         ];
     }
