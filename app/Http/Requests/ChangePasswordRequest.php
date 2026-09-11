@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Password;
 use Override;
 
-class UserRequest extends FormRequest
+class ChangePasswordRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,20 +25,19 @@ class UserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name' => ['required', 'string', 'max:50'],
-            'last_name' => ['required', 'string', 'max:50'],
-            'email' => ['required', 'string', 'max:50', 'ends_with:@gmail.com', 'unique:users,email'],
-            'password' => ['sometimes', 'string', 'confirmed', Password::defaults()],
-            'attachment' => ['sometimes', 'string', 'max:100', 'url'],
+            'revoke_current_session' => ['required', 'boolean'],
+            'revoke_other_session' => ['required', 'boolean'],
+            'current_password' => ['required', 'string', 'current_password'],
+            'password' => ['required', 'string', 'different:current_password', 'confirmed', Password::defaults()],
         ];
     }
 
     #[Override]
-    public function attributes(): array
+    public function messages(): array
     {
         return [
-            'first_name' => 'first name',
-            'last_name' => 'last name',
+            'current_password.current_password' => 'The current password you provided is incorrect.',
+            'password.different' => 'Your new password cannot be the same as your current password.',
         ];
     }
 }
