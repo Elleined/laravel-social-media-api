@@ -2,17 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Emoji;
-use App\Models\ProviderType;
-use Illuminate\Http\Request;
+use DB;
 
 class ReferenceController
 {
-    public function emojis() {
-        return Emoji::all();
+    public function emojis()
+    {
+        return DB::table('ref_emojis')
+            ->select(['id', 'name'])
+            ->get();
     }
 
-    public function providerTypes() {
-        return ProviderType::all();
+    public function providerTypes()
+    {
+        return DB::table('ref_provider_types')
+            ->select(['id', 'name'])
+            ->get();
     }
 }

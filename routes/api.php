@@ -11,7 +11,14 @@ Route::get('', fn () => 'pong');
 
 Route::post('register', [RegisterController::class, 'register']);
 Route::post('login', [LoginController::class, 'login']);
-Route::post('forgot-password', [ForgotPasswordController::class, 'forgotPassword']);
+
+Route::prefix('forgot-password')
+    ->controller(ForgotPasswordController::class)
+    ->group(function () {
+        Route::post('', 'forgotPassword');
+        Route::get('verify-reset-token', 'verifyResetToken');
+        Route::put('reset-password', 'resetPassword');
+    });
 
 Route::middleware('auth:sanctum')
     ->group(function () {

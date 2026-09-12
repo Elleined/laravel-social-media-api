@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Override;
 
 class ForgotPasswordRequest extends FormRequest
 {
@@ -12,7 +13,7 @@ class ForgotPasswordRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,7 +24,15 @@ class ForgotPasswordRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'email' => ['required', 'string', 'max:50', 'ends_with:@gmail.com', 'exists:users,email'],
+        ];
+    }
+
+    #[Override]
+    public function messages()
+    {
+        return [
+            'email.exists' => 'If an account is associated with that email address, a password reset link has been sent. Please check your inbox.',
         ];
     }
 }

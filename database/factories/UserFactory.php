@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -28,7 +29,7 @@ class UserFactory extends Factory
             'email' => fake()->bothify('??##??@gmail.com'),
             'password' => fake()->optional()->password(8),
             'attachment' => fake()->optional()->word(),
-            'deleted_at' => fake()->optional()->date(),
+            'deleted_at' => Carbon::parse(fake()->optional()->date()),
         ];
     }
 }
