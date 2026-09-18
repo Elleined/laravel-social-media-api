@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\PostController;
 use App\Http\Controllers\ReferenceController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\UserController;
@@ -42,5 +43,20 @@ Route::middleware('auth:sanctum')
             ->group(function () {
                 Route::get('emojis', 'emojis');
                 Route::get('provider-types', 'providerTypes');
+            });
+
+        // Posts
+        Route::prefix('posts')
+            ->controller(PostController::class)
+            ->group(function () {
+                Route::prefix('feed')
+                    ->group(function () {
+                        Route::get('', 'feed');
+                        Route::get('me', 'me'); // Get own posts only
+                    });
+
+                Route::post('', 'store');
+                Route::put('/{post}', 'update');
+                Route::delete('{post}', 'destroy');
             });
     });

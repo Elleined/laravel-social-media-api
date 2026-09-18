@@ -9,9 +9,11 @@ class RegisterController
 {
     public function register(UserRequest $request)
     {
-        $user = User::create($request->validated());
+        $user = User::query()
+            ->create($request->validated());
 
         // send welcome email
+
         return response()->json([
             'message' => 'User created successfully',
             'data' => $user,
