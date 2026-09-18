@@ -25,9 +25,7 @@ class ForgotPasswordController
             ->first();
 
         // 2.1 Theres a record and NOT EXPIRED token
-        if ($existing && Carbon::parse($existing->created_at)
-            ->addMinutes(10)
-            ->isFuture()) {
+        if ($existing && Carbon::now()->lessThanOrEqualTo($existing->expires_at)) {
             return response()->json([
                 'message' => 'An reset password link has already been sent. Please check your email or wait before requesting a new code.',
             ], 429);
@@ -41,6 +39,7 @@ class ForgotPasswordController
             [
                 'token' => hash('sha256', $token),
                 'created_at' => Carbon::now(),
+                'expires_at' => Carbon::now()->addMinutes(10),
             ]
         );
 
@@ -61,29 +60,14 @@ class ForgotPasswordController
         $token = $requestBody['token'];
         $email = $requestBody['email'];
 
-        // 2. Check if the user has record in the password reset tokens table
-        $existing = DB::table('password_reset_tokens')
-            ->where('email', '=', $email)
-            ->where('token', '=', hash('sha256', $token))
-            ->first();
+        // Validate the token
+        $verification = $this->validateToken($email, $token);
+        $valid = $verification['valid'];
+        $message = $verification['message'];
 
-        if (! $existing) {
+        if (! $valid) {
             return response()->json([
-                'message' => 'The token provided is invalid or has expired. Please check your email and try again.',
-            ], 422);
-        }
-
-        // 3. Check if token is EXPIRED
-        if (Carbon::parse($existing->created_at)
-            ->addMinutes(10)
-            ->isPast()) {
-            // 3.1 token is EXPIRED hence we delete the record
-            DB::table('password_reset_tokens')
-                ->where('email', '=', $email)
-                ->delete();
-
-            return response()->json([
-                'message' => 'This verification code has expired. Please request a new code.',
+                'message' => $message,
             ], 422);
         }
 
@@ -98,24 +82,65 @@ class ForgotPasswordController
         $email = $requestBody['email'];
         $newPassword = $requestBody['new_password'];
 
+        // Validate the token
+        $verification = $this->validateToken($email, $token);
+        $valid = $verification['valid'];
+        $message = $verification['message'];
+
+        if (! $valid) {
+            return response()->json([
+                'message' => $message,
+            ], 422);
+        }
+
         $user = User::query()
             ->where('email', '=', $email)
             ->first();
 
         DB::transaction(function () use ($user, $email, $newPassword) {
-            // Update the password
+            // 4. Update the password
             $user->update([
                 'password' => $newPassword,
             ]);
 
-            // Reset all sessions across all logged in devices
+            // 5. Reset all sessions across all logged in devices
             $user->tokens()->delete();
 
-            // Delete the used token upon successful verification
+            // 6. Delete the used token upon successful verification
             DB::table('password_reset_tokens')
                 ->where('email', '=', $email)
                 ->delete();
         });
+    }
 
+    private function validateToken(string $email, string $token)
+    {
+        // 2. Check if the user has record in the password reset tokens table
+        $existing = DB::table('password_reset_tokens')
+            ->where('email', '=', $email)
+            ->where('token', '=', hash('sha256', $token))
+            ->first();
+
+        if (! $existing) {
+            return [
+                'valid' => false,
+                'message' => 'The token provided is invalid or has expired. Please check your email and try again.',
+            ];
+        }
+
+        // 3. Check if token is EXPIRED
+        if ($existing && Carbon::now()->greaterThanOrEqualTo($existing->expires_at)) {
+            // 3.1 token is EXPIRED hence we delete the record
+            DB::table('password_reset_tokens')
+                ->where('email', '=', $email)
+                ->delete();
+
+            return [
+                'valid' => false,
+                'message' => 'This token has expired. Please request a new token.',
+            ];
+        }
+
+        return ['valid' => true, 'message' => 'valid'];
     }
 }
