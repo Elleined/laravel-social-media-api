@@ -48,7 +48,7 @@ class ForgotPasswordController
 
         return response()->json([
             'message' => 'If an account is associated with that email address, a password reset link has been sent. Please check your inbox.',
-            'tokenWillBeRemove' => $token,
+            'tokenWillBeRemoveAndWIllBESentToEmail' => $token,
         ]);
     }
 

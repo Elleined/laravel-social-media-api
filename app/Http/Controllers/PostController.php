@@ -7,6 +7,7 @@ use App\Http\Requests\PostRequest;
 use App\Http\Requests\PostUpdateRequest;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
+use Gate;
 use Illuminate\Http\Request;
 
 class PostController
@@ -47,6 +48,7 @@ class PostController
      */
     public function store(PostRequest $request)
     {
+        Gate::authorize('create');
         $requestBody = $request->validated();
 
         $post = Post::query()->create([
@@ -65,6 +67,8 @@ class PostController
      */
     public function update(PostUpdateRequest $request, Post $post)
     {
+        Gate::authorize('update', $post);
+
         $post->update($request->validated());
 
         return response()->json([
@@ -78,6 +82,8 @@ class PostController
      */
     public function destroy(Post $post)
     {
+        Gate::authorize('delete', $post);
+
         $post->delete();
 
         return response()->noContent();

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\LoginRequest;
 use App\Models\User;
 use Hash;
-use Illuminate\Http\Request;
 
 class LoginController
 {
@@ -16,11 +15,13 @@ class LoginController
         $email = $validated['email'];
         $password = $validated['password'];
 
-        $user = User::query()->where('email', '=', $email)->first();
+        $user = User::query()
+            ->where('email', '=', $email)
+            ->first();
 
         if ($user->isDeleted()) {
             return response()->json([
-                'message' => 'Inactive users cannot log in.',
+                'message' => 'This account is inactive. Please contact support.',
             ], 403);
         }
 
