@@ -18,6 +18,12 @@ class LoginController
 
         $user = User::query()->where('email', '=', $email)->first();
 
+        if ($user->isDeleted()) {
+            return response()->json([
+                'message' => 'Inactive users cannot log in.',
+            ], 403);
+        }
+
         $hashedPassword = $user->password;
         if (! Hash::check($password, $hashedPassword)) {
             return response()->json([
@@ -33,13 +39,5 @@ class LoginController
             'token' => $token,
             'requires_password_rehash' => Hash::needsRehash($hashedPassword),
         ]);
-    }
-
-    public function logout(Request $request)
-    {
-        $user = $request->user();
-        $user->currentAccessToken()->delete();
-
-        return response()->json(status: 204);
     }
 }

@@ -2,41 +2,44 @@
 
 namespace App\Http\Controllers;
 
+use App\Direction;
 use App\Http\Requests\PostRequest;
 use App\Http\Requests\PostUpdateRequest;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
-use App\PostParams;
-use DB;
+use Illuminate\Http\Request;
 
 class PostController
 {
-    public function feed()
+    public function index(Request $request)
     {
-        //
-    }
+        $page = $request->integer('page', 1);
+        $perPage = $request->integer('per_page', 10);
+        $authorId = $request->filled('author_id') ? $request->string('author_id') : null;
+        $search = $request->filled('search') ? $request->string('title') : null;
+        $status = $request->filled('status') ? $request->boolean('status') : null;
+        $direction = $request->filled('direction') ? $request->enum('direction', Direction::class, Direction::ASC) : null;
+        $from = $request->filled('from') ? $request->date('from') : null;
+        $to = $request->filled('to') ? $request->date('to') : null;
 
-    public function me()
-    {
-        //
-    }
+        $posts = Post::withTrashed()
+            // Soft Delete Filtering
+            ->when($status === true, fn ($query) => $query->withoutTrashed())
+            ->when($status === false, fn ($query) => $query->onlyTrashed())
 
-    private function index(PostParams $params)
-    {
-        $page = $params->page;
-        $perPage = $params->perPage;
-        $authorId = $params?->authorId;
-        $titleSearch = $params?->titleSearch;
-        $status = $params?->status;
-        $direction = $params?->direction;
-        $from = $params?->from;
-        $to = $params?->to;
+            // Filters
+            ->when(! empty($authorId), fn ($query) => $query->where('author_id', $authorId))
+            ->when(! empty($search), fn ($query) => $query->where('title', 'like', "{$search}%"))
 
-        DB::table('posts as post')
-            ->when(! empty($authorId), fn ($query) => $query->where('author_id', '=', $authorId))
-            ->when(! empty($titleSearch), fn ($query) => $query->where('title', 'like', "{$titleSearch}%"))
-            ->select(['user.id'])
+            // Date Range Filter
+            ->when(! is_null($from), fn ($query) => $query->where('created_at', '>=', $from))
+            ->when(! is_null($to), fn ($query) => $query->where('created_at', '<=', $to))
+
+            // Sorting & Pagination
+            ->when(! is_null($direction), fn ($query) => $query->orderBy('created_at', strtolower($direction?->name)))
             ->paginate(perPage: $perPage, page: $page);
+
+        return PostResource::collection($posts);
     }
 
     /**

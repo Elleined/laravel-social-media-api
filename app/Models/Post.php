@@ -50,8 +50,6 @@ class Post extends Model
     /** @use HasFactory<PostFactory> */
     use HasFactory, HasUuids, SoftDeletes;
 
-    protected $hidden = ['created_at', 'updated_at', 'deleted_at'];
-
     protected $fillable = ['title', 'content', 'attachment', 'author_id', 'deleted_at'];
 
     public function author(): BelongsTo

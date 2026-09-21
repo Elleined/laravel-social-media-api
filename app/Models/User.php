@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,6 +12,7 @@ use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 use Laravel\Sanctum\HasApiTokens;
+use Laravel\Sanctum\PersonalAccessToken;
 
 /**
  * @property string $id
@@ -30,6 +30,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property-read int|null $posts_count
  * @property-read Collection<int, SocialUser> $socials
  * @property-read int|null $socials_count
+ *
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newQuery()
@@ -46,9 +47,11 @@ use Laravel\Sanctum\HasApiTokens;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User withTrashed(bool $withTrashed = true)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User withoutTrashed()
+ *
  * @property-read mixed $is_active
- * @property-read Collection<int, \Laravel\Sanctum\PersonalAccessToken> $tokens
+ * @property-read Collection<int, PersonalAccessToken> $tokens
  * @property-read int|null $tokens_count
+ *
  * @mixin \Eloquent
  */
 class User extends Authenticatable
@@ -57,10 +60,6 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, HasUuids, Notifiable, SoftDeletes;
 
     protected $fillable = ['first_name', 'last_name', 'email', 'password', 'attachment'];
-
-    protected $hidden = ['password', 'created_at', 'updated_at', 'deleted_at'];
-
-    protected $appends = ['is_active'];
 
     /**
      * Get the attributes that should be cast.
@@ -74,10 +73,8 @@ class User extends Authenticatable
         ];
     }
 
-    public function isActive(): Attribute
+    public function isDeleted(): bool
     {
-        return Attribute::make(
-            get: fn () => ! $this->trashed()
-        );
+        return $this->trashed();
     }
 }
