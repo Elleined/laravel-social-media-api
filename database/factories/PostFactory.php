@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Post;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -22,8 +23,8 @@ class PostFactory extends Factory
             'title' => fake()->sentence(),
             'content' => fake()->paragraph(),
             'attachment' => fake()->optional()->word(),
-            'deleted_at' => fake()->optional()->date(),
-            'author_id' => User::query()->withTrashed()->pluck('id')->random(),
+            'deleted_at' => fake()->boolean() ? Carbon::parse(fake()->date()) : null,
+            'author_id' => User::withTrashed()->pluck('id')->random(),
         ];
     }
 }

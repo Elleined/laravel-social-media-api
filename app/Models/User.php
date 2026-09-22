@@ -77,4 +77,14 @@ class User extends Authenticatable
     {
         return $this->trashed();
     }
+
+    public function isActive(): bool
+    {
+        return ! $this->trashed();
+    }
+
+    public function isAdmin(): bool
+    {
+        return true;
+    }
 }

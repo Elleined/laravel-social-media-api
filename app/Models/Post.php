@@ -56,4 +56,9 @@ class Post extends Model
     {
         return $this->belongsTo(User::class, 'author_id');
     }
+
+    public function isActive(): bool
+    {
+        return ! $this->trashed();
+    }
 }

@@ -12,9 +12,9 @@ class ProfileController
 {
     public function show(Request $request)
     {
-        $currentUser = $request->user();
+        $user = $request->user();
 
-        return UserResource::make($currentUser);
+        return UserResource::make($user);
     }
 
     /**
@@ -22,13 +22,13 @@ class ProfileController
      */
     public function update(UserUpdateRequest $request)
     {
-        $currentUser = $request->user();
+        $user = $request->user();
 
-        $currentUser->update($request->validated());
+        $user->update($request->validated());
 
         return response()->json([
             'message' => 'User updated successfully',
-            'data' => UserResource::make($currentUser),
+            'data' => UserResource::make($user),
         ]);
     }
 
@@ -37,12 +37,12 @@ class ProfileController
      */
     public function destroy(Request $request)
     {
-        $currentUser = $request->user();
+        $user = $request->user();
 
-        DB::transaction(function () use ($currentUser) {
-            $currentUser->delete();
+        DB::transaction(function () use ($user) {
+            $user->delete();
 
-            $currentUser->tokens()->delete();
+            $user->tokens()->delete();
         });
 
         return response()->noContent();
@@ -52,24 +52,24 @@ class ProfileController
     {
         $requestBody = $request->validated();
 
-        $currentUser = $request->user();
+        $user = $request->user();
 
         $password = $requestBody['password'];
         $revokeCurrentSession = $request['revoke_current_session'];
         $revokeOtherSession = $request['revoke_other_session'];
 
-        DB::transaction(function () use ($currentUser, $password, $revokeCurrentSession, $revokeOtherSession) {
-            $currentUser->update([
+        DB::transaction(function () use ($user, $password, $revokeCurrentSession, $revokeOtherSession) {
+            $user->update([
                 'password' => $password,
             ]);
 
             if ($revokeCurrentSession && $revokeOtherSession) {
-                $currentUser->tokens()->delete();
+                $user->tokens()->delete();
             } elseif ($revokeCurrentSession) {
-                $currentUser->currentAccessToken()->delete();
+                $user->currentAccessToken()->delete();
             } elseif ($revokeOtherSession) {
-                $currentTokenId = $currentUser->currentAccessToken()->id;
-                $currentUser->tokens()->where('id', '!=', $currentTokenId)->delete();
+                $currentTokenId = $user->currentAccessToken()->id;
+                $user->tokens()->where('id', '!=', $currentTokenId)->delete();
             }
         });
 

@@ -48,7 +48,6 @@ class PostController
      */
     public function store(PostRequest $request)
     {
-        Gate::authorize('create');
         $requestBody = $request->validated();
 
         $post = Post::query()->create([

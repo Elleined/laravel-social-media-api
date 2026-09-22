@@ -15,7 +15,7 @@ class LoginController
         $email = $validated['email'];
         $password = $validated['password'];
 
-        $user = User::query()
+        $user = User::withTrashed()
             ->where('email', '=', $email)
             ->first();
 
@@ -33,7 +33,9 @@ class LoginController
         }
 
         $deviceName = $request->userAgent() ?? 'login';
-        $token = $user->createToken(name: $deviceName, expiresAt: now()->plus(weeks: 1))->plainTextToken;
+        $token = $user->createToken(name: $deviceName, expiresAt: now()
+            ->plus(weeks: 1))
+            ->plainTextToken;
 
         return response()->json([
             'message' => 'Login successful.',

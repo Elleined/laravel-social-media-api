@@ -8,27 +8,20 @@ use App\Models\User;
 class PostPolicy
 {
     /**
-     * Determine whether the user can view any models.
-     */
-    public function viewAny(User $user): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can view the model.
+     * Determine whether the user can update the model.
      */
     public function view(User $user, Post $post): bool
     {
-        return false;
+        return $user->isActive() &&
+        $post->isActive();
     }
 
     /**
-     * Determine whether the user can create models.
+     * Determine whether the user can update the model.
      */
     public function create(User $user): bool
     {
-        return true;
+        return $user->isActive();
     }
 
     /**
@@ -36,7 +29,9 @@ class PostPolicy
      */
     public function update(User $user, Post $post): bool
     {
-        return $user->id === $post->author_id;
+        return ($user->id === $post->author_id) &&
+        $user->isActive() &&
+        $post->isActive();
     }
 
     /**
@@ -44,22 +39,8 @@ class PostPolicy
      */
     public function delete(User $user, Post $post): bool
     {
-        return $user->id === $post->author_id;
-    }
-
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, Post $post): bool
-    {
-        return $user->id === $post->author_id;
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Post $post): bool
-    {
-        return $user->id === $post->author_id;
+        return ($user->id === $post->author_id) &&
+        $user->isActive() &&
+        $post->isActive();
     }
 }

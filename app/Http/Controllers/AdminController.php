@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UserRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use DB;
+use Gate;
 use Illuminate\Http\Request;
 
 class AdminController
@@ -32,8 +34,28 @@ class AdminController
         return UserResource::collection($users);
     }
 
+    public function store(UserRequest $request)
+    {
+        Gate::authorize('create');
+
+        $requestBody = $request->validated();
+        $user = User::create([
+            ...$requestBody,
+            'created_by' => $request->user()->id, // Current is admin user
+        ]);
+
+        // send welcome email
+
+        return response()->json([
+            'message' => 'User created successfully',
+            'data' => UserResource::make($user),
+        ], 201);
+    }
+
     public function show(User $user)
     {
+        Gate::authorize('view', $user);
+
         return UserResource::make($user);
     }
 
@@ -42,6 +64,8 @@ class AdminController
      */
     public function update(UserUpdateRequest $request, User $user)
     {
+        Gate::authorize('update', $user);
+
         $user->update($request->validated());
 
         return response()->json([
@@ -55,6 +79,8 @@ class AdminController
      */
     public function destroy(User $user)
     {
+        Gate::authorize('delete', $user);
+
         DB::transaction(function () use ($user) {
             $user->delete();
 

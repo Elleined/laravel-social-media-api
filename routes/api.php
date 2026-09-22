@@ -5,6 +5,7 @@ use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\PostReactionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReferenceController;
 use App\Http\Controllers\RegisterController;
@@ -29,14 +30,14 @@ Route::middleware('auth:sanctum')
         Route::post('logout', [LogoutController::class, 'logout']);
 
         // Admin
-        Route::middleware(['can:admin'])
-            ->prefix('admin/users')
+        Route::prefix('admin/users')
             ->controller(AdminController::class)
             ->group(function () {
                 Route::get('', 'index');
-                Route::get('{user}', 'show');
-                Route::put('{user}', 'update');
-                Route::delete('{user}', 'destroy');
+                Route::post('', 'store');
+                Route::get('{user}', 'show')->withTrashed();
+                Route::put('{user}', 'update')->withTrashed();
+                Route::delete('{user}', 'destroy')->withTrashed();
             });
 
         // Users
@@ -63,7 +64,14 @@ Route::middleware('auth:sanctum')
             ->group(function () {
                 Route::get('', 'index');
                 Route::post('', 'store');
-                Route::put('{post}', 'update');
-                Route::delete('{post}', 'destroy');
+                Route::put('{post}', 'update')->withTrashed();
+                Route::delete('{post}', 'destroy')->withTrashed();
+
+                Route::prefix('{post}/reactions')
+                    ->controller(PostReactionController::class)
+                    ->group(function () {
+                        Route::get('', 'index')->withTrashed();
+                        Route::post('', 'toggle')->withTrashed();
+                    });
             });
     });
