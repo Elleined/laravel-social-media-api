@@ -20,7 +20,6 @@ class CommentResource extends JsonResource
             'attachment' => $this->attachment,
             'is_active' => $this->deleted_at === null,
             'author' => UserResource::make($this->author),
-            'post' => PostResource::make($this->post),
         ];
     }
 }

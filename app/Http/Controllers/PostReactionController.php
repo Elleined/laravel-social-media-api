@@ -12,7 +12,7 @@ class PostReactionController
 {
     public function index(Request $request, Post $post)
     {
-        Gate::authorize('view', $post);
+        Gate::authorize('view', [Post::class, $post]);
 
         $page = $request->integer('page', 1);
         $perPage = $request->integer('per_page', 10);
@@ -50,7 +50,8 @@ class PostReactionController
     // 3. Updates the reaction if a different emoji is selected.
     public function toggle(Request $request, Post $post)
     {
-        Gate::authorize('view', $post);
+        Gate::authorize('view', [Post::class, $post]);
+
         // allow only current user for update or delete
 
         $emojiId = $request->string('emoji_id')->value();

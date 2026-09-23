@@ -59,7 +59,7 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, HasUuids, Notifiable, SoftDeletes;
 
-    protected $fillable = ['first_name', 'last_name', 'email', 'password', 'attachment'];
+    protected $fillable = ['first_name', 'last_name', 'email', 'password', 'attachment', 'is_admin'];
 
     /**
      * Get the attributes that should be cast.
@@ -85,6 +85,6 @@ class User extends Authenticatable
 
     public function isAdmin(): bool
     {
-        return true;
+        return $this->is_admin;
     }
 }

@@ -50,6 +50,11 @@ class Comment extends Model
 
     protected $fillable = ['content', 'attachment', 'deleted_at', 'post_id', 'author_id'];
 
+    public function post(): BelongsTo
+    {
+        return $this->belongsTo(Post::class, 'post_id');
+    }
+
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'author_id');

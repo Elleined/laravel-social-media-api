@@ -26,6 +26,7 @@ class UserRequest extends FormRequest
     public function rules(): array
     {
         $isCreate = $this->isMethod('POST');
+        $currentUser = $this->user();
 
         $isRequired = $isCreate ? 'required' : 'sometimes';
         $isEmailUnique = $isCreate
@@ -36,8 +37,9 @@ class UserRequest extends FormRequest
             'first_name' => [$isRequired, 'string', 'max:50'],
             'last_name' => [$isRequired, 'string', 'max:50'],
             'email' => [$isRequired, 'string', 'max:50', 'ends_with:@gmail.com', $isEmailUnique],
-            'password' => [Rule::excludeIf(! $isCreate), 'required', 'string', 'confirmed', Password::defaults()],
             'attachment' => ['sometimes', 'string', 'max:100', 'url'],
+            'password' => [Rule::excludeIf(! $isCreate), 'required', 'string', 'confirmed', Password::defaults()], // Only required if http method is post
+            'is_admin' => [Rule::excludeIf(! ($currentUser && $currentUser->is_admin)), 'required',  'boolean'], // Only required if current user is admin
         ];
     }
 
