@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Direction;
 use App\Http\Requests\PostRequest;
-use App\Http\Requests\PostUpdateRequest;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
 use Gate;
@@ -14,6 +13,8 @@ class PostController
 {
     public function index(Request $request)
     {
+        Gate::authorize('view', [Post::class]);
+
         $page = $request->integer('page', 1);
         $perPage = $request->integer('per_page', 10);
         $authorId = $request->string('author_id');
@@ -48,9 +49,11 @@ class PostController
      */
     public function store(PostRequest $request)
     {
+        Gate::authorize('create', [Post::class]);
+
         $requestBody = $request->validated();
 
-        $post = Post::query()->create([
+        $post = Post::create([
             'author_id' => $request->user()->id,
             ...$requestBody,
         ]);
@@ -64,9 +67,9 @@ class PostController
     /**
      * Update the specified resource in storage.
      */
-    public function update(PostUpdateRequest $request, Post $post)
+    public function update(PostRequest $request, Post $post)
     {
-        Gate::authorize('update', $post);
+        Gate::authorize('update', [Post::class, $post]);
 
         $post->update($request->validated());
 
@@ -81,7 +84,7 @@ class PostController
      */
     public function destroy(Post $post)
     {
-        Gate::authorize('delete', $post);
+        Gate::authorize('delete', [Post::class, $post]);
 
         $post->delete();
 

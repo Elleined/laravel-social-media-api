@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\CommentReactionController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
@@ -67,11 +69,30 @@ Route::middleware('auth:sanctum')
                 Route::put('{post}', 'update')->withTrashed();
                 Route::delete('{post}', 'destroy')->withTrashed();
 
+                // Post reactions
                 Route::prefix('{post}/reactions')
                     ->controller(PostReactionController::class)
                     ->group(function () {
                         Route::get('', 'index')->withTrashed();
                         Route::post('', 'toggle')->withTrashed();
+                    });
+
+                // Comment
+                Route::prefix('{post}/comments')
+                    ->controller(CommentController::class)
+                    ->group(function () {
+                        Route::get('', 'index')->withTrashed();
+                        Route::post('', 'store')->withTrashed();
+                        Route::put('{comment}', 'update')->withTrashed();
+                        Route::delete('{comment}', 'destroy')->withTrashed();
+
+                        // Comment reactions
+                        Route::prefix('{comment}/reactions')
+                            ->controller(CommentReactionController::class)
+                            ->group(function () {
+                                Route::get('', 'index')->withTrashed();
+                                Route::post('', 'toggle')->withTrashed();
+                            });
                     });
             });
     });

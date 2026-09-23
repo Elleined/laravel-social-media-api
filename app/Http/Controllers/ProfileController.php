@@ -3,15 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ChangePasswordRequest;
-use App\Http\Requests\UserUpdateRequest;
+use App\Http\Requests\UserRequest;
 use App\Http\Resources\UserResource;
+use App\Models\User;
 use DB;
+use Gate;
 use Illuminate\Http\Request;
 
 class ProfileController
 {
     public function show(Request $request)
     {
+        Gate::authorize('me', [User::class]);
+
         $user = $request->user();
 
         return UserResource::make($user);
@@ -20,8 +24,10 @@ class ProfileController
     /**
      * Update the specified resource in storage.
      */
-    public function update(UserUpdateRequest $request)
+    public function update(UserRequest $request)
     {
+        Gate::authorize('me', [User::class]);
+
         $user = $request->user();
 
         $user->update($request->validated());
@@ -37,6 +43,8 @@ class ProfileController
      */
     public function destroy(Request $request)
     {
+        Gate::authorize('me', [User::class]);
+
         $user = $request->user();
 
         DB::transaction(function () use ($user) {
@@ -50,6 +58,8 @@ class ProfileController
 
     public function password(ChangePasswordRequest $request)
     {
+        Gate::authorize('me', [User::class]);
+
         $requestBody = $request->validated();
 
         $user = $request->user();

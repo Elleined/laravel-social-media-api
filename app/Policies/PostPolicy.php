@@ -10,10 +10,9 @@ class PostPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function view(User $user, Post $post): bool
+    public function view(User $user): bool
     {
-        return $user->isActive() &&
-        $post->isActive();
+        return $user->isActive();
     }
 
     /**
@@ -21,7 +20,7 @@ class PostPolicy
      */
     public function create(User $user): bool
     {
-        return $user->isActive();
+        return $this->view($user);
     }
 
     /**
@@ -39,8 +38,6 @@ class PostPolicy
      */
     public function delete(User $user, Post $post): bool
     {
-        return ($user->id === $post->author_id) &&
-        $user->isActive() &&
-        $post->isActive();
+        return $this->update($user, $post);
     }
 }

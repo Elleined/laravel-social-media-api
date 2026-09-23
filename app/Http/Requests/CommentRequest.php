@@ -2,9 +2,10 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class PostUpdateRequest extends FormRequest
+class CommentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,9 +22,10 @@ class PostUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
+        $isRequired = $this->isMethod('POST') ? 'required' : 'sometimes';
+
         return [
-            'title' => ['sometimes', 'string', 'max:100'],
-            'content' => ['sometimes', 'string'],
+            'content' => [$isRequired, 'string'],
             'attachment' => ['sometimes', 'nullable', 'string', 'max:100', 'url'],
         ];
     }

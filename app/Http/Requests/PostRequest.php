@@ -22,9 +22,11 @@ class PostRequest extends FormRequest
      */
     public function rules(): array
     {
+        $isRequired = $this->isMethod('POST') ? 'required' : 'sometimes';
+
         return [
-            'title' => ['required', 'string', 'max:100'],
-            'content' => ['required', 'string'],
+            'title' => [$isRequired, 'string', 'max:100'],
+            'content' => [$isRequired, 'string'],
             'attachment' => ['sometimes', 'nullable', 'string', 'max:100', 'url'],
         ];
     }
