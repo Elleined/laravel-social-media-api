@@ -16,12 +16,12 @@ class PostController
     {
         $page = $request->integer('page', 1);
         $perPage = $request->integer('per_page', 10);
-        $authorId = $request->filled('author_id') ? $request->string('author_id') : null;
-        $search = $request->filled('search') ? $request->string('title') : null;
-        $status = $request->filled('status') ? $request->boolean('status') : null;
-        $direction = $request->filled('direction') ? $request->enum('direction', Direction::class, Direction::ASC) : null;
-        $from = $request->filled('from') ? $request->date('from') : null;
-        $to = $request->filled('to') ? $request->date('to') : null;
+        $authorId = $request->string('author_id');
+        $search = $request->string('title');
+        $status = $request->boolean('status');
+        $direction = $request->enum('direction', Direction::class, Direction::ASC);
+        $from = $request->date('from');
+        $to = $request->date('to');
 
         $posts = Post::withTrashed()
             // Soft Delete Filtering
@@ -29,15 +29,15 @@ class PostController
             ->when($status === false, fn ($query) => $query->onlyTrashed())
 
             // Filters
-            ->when(! empty($authorId), fn ($query) => $query->where('author_id', $authorId))
-            ->when(! empty($search), fn ($query) => $query->where('title', 'like', "{$search}%"))
+            ->when($request->filled('author_id'), fn ($query) => $query->where('author_id', $authorId))
+            ->when($request->filled('search'), fn ($query) => $query->where('title', 'like', "{$search}%"))
 
             // Date Range Filter
-            ->when(! is_null($from), fn ($query) => $query->where('created_at', '>=', $from))
-            ->when(! is_null($to), fn ($query) => $query->where('created_at', '<=', $to))
+            ->when($request->filled('from'), fn ($query) => $query->where('created_at', '>=', $from))
+            ->when($request->filled('to'), fn ($query) => $query->where('created_at', '<=', $to))
 
             // Sorting & Pagination
-            ->when(! is_null($direction), fn ($query) => $query->orderBy('created_at', strtolower($direction?->name)))
+            ->when($request->filled('direction'), fn ($query) => $query->orderBy('created_at', strtolower($direction?->name)))
             ->paginate(perPage: $perPage, page: $page);
 
         return PostResource::collection($posts);

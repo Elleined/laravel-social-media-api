@@ -6,6 +6,7 @@ use App\Models\Post;
 use DB;
 use Gate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class PostReactionController
 {
@@ -15,26 +16,30 @@ class PostReactionController
 
         $page = $request->integer('page', 1);
         $perPage = $request->integer('per_page', 10);
-        $emojiId = $request->filled('emoji_id') ? $request->string('emoji_id') : null;
-        $from = $request->filled('from') ? $request->date('from') : null;
-        $to = $request->filled('to') ? $request->date('to') : null;
+        $emojiId = $request->string('emoji_id');
+        $from = $request->date('from');
+        $to = $request->date('to');
 
         return DB::table('post_reactions as reaction')
-            ->where('reaction.post_id', '=', $post->id)
             ->join('ref_emojis as emoji', 'reaction.emoji_id', '=', 'emoji.id')
+            ->join('users as user', 'reaction.reactor_id', '=', 'user.id')
+
+            // Post filter
+            ->where('reaction.post_id', '=', $post->id)
 
             // Emoji filter
-            ->when(! empty($emojiId), fn ($query) => $query->where('reaction.emoji_id', $emojiId))
+            ->when($request->filled('emoji_id'), fn ($query) => $query->where('reaction.emoji_id', $emojiId))
 
             // Date Range Filter
-            ->when(! is_null($from), fn ($query) => $query->where('reaction.created_at', '>=', $from))
-            ->when(! is_null($to), fn ($query) => $query->where('reaction.created_at', '<=', $to))
+            ->when($request->filled('from'), fn ($query) => $query->where('reaction.created_at', '>=', $from))
+            ->when($request->filled('to'), fn ($query) => $query->where('reaction.created_at', '<=', $to))
 
             ->select([
-                'reaction.id as reaction_id',
-                'emoji.id as emoji_id',
                 'emoji.name as emoji_name',
+                DB::raw("CONCAT_WS(' ', user.first_name, user.last_name) as reactor_full_name"),
+                'user.attachment as reactor_attachment',
             ])
+
             ->paginate(perPage: $perPage, page: $page);
     }
 
@@ -46,9 +51,66 @@ class PostReactionController
     public function toggle(Request $request, Post $post)
     {
         Gate::authorize('view', $post);
+        // allow only current user for update or delete
+
+        $emojiId = $request->string('emoji_id')->value();
+        $postId = $post->id;
+        $reactorId = $request->user()->id;
+
+        Validator::make(
+            [
+                'emoji_id' => $emojiId,
+            ],
+            [
+                'emoji_id' => ['required', 'string', 'exists:ref_emojis,id'],
+            ],
+            [
+                'exists' => ':attribute does not exists',
+            ]
+        )->validate();
+
+        // Fetch the record
+        $existingRecord = DB::table('post_reactions')
+            ->where('reactor_id', $reactorId)
+            ->where('post_id', $postId)
+            ->first();
 
         // Branch 1: Create if no reaction exists yet
-        // Branch 2: Delete if clicking the same emoji again (toggle off)
-        // Branch 3: Update if selecting a different emoji
+        if (is_null($existingRecord)) {
+            DB::table('post_reactions')
+                ->insert([
+                    'post_id' => $postId,
+                    'reactor_id' => $reactorId,
+                    'emoji_id' => $emojiId,
+                ]);
+
+            return response()->json([
+                'message' => 'Post reaction created successfully',
+            ]);
+        }
+
+        // Branch 2: Update if selecting a different emoji
+        if ($existingRecord->emoji_id !== $emojiId) {
+            DB::table('post_reactions')
+                ->where('reactor_id', $reactorId)
+                ->where('post_id', $postId)
+                ->update([
+                    'emoji_id' => $emojiId,
+                ]);
+
+            return response()->json([
+                'message' => 'Post reaction updated successfully',
+            ]);
+        }
+
+        // Branch 3: Delete if clicking the same emoji again (toggle off)
+        if ($existingRecord->emoji_id === $emojiId) {
+            DB::table('post_reactions')
+                ->where('reactor_id', $reactorId)
+                ->where('post_id', $postId)
+                ->delete();
+
+            return response()->noContent();
+        }
     }
 }

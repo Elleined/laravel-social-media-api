@@ -14,9 +14,11 @@ class AdminController
 {
     public function index(Request $request)
     {
+        Gate::authorize('view', $request->user());
+
         $page = $request->integer('page', 1);
         $perPage = $request->integer('per_page', 10);
-        $status = $request->filled('status') ? $request->boolean('status') : null;
+        $status = $request->boolean('status');
         $search = $request->string('search');
 
         $users = User::withTrashed()
