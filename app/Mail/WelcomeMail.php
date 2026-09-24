@@ -30,7 +30,7 @@ class WelcomeMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Welcome to '.config('app.name').'! '.$this->fullName,
+            subject: 'Welcome to '.config('app.name').' '.$this->fullName.'!',
         );
     }
 
@@ -41,6 +41,9 @@ class WelcomeMail extends Mailable
     {
         return new Content(
             view: 'email.welcome_user',
+            with: [
+                'fullName' => $this->fullName,
+            ]
         );
     }
 

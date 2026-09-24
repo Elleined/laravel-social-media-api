@@ -32,7 +32,7 @@ class ForgotPasswordMail extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: config('app.name').' Reset Password Request'
+            subject: config('app.name').' Reset Password Request | '.$this->email
         );
     }
 
