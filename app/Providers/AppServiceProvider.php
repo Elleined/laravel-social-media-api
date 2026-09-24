@@ -7,6 +7,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 use Laravel\Sanctum\PersonalAccessToken;
 use Laravel\Sanctum\Sanctum;
+use Mail;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,6 +24,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if ($this->app->environment('local')) {
+            Mail::alwaysTo('example@example.com');
+        }
+
         FormRequest::failOnUnknownFields();
         Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
         Password::defaults(function () {

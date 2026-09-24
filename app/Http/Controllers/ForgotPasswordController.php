@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ForgotPasswordChangeRequest;
 use App\Http\Requests\ForgotPasswordRequest;
 use App\Http\Requests\ForgotPasswordVerifyRequest;
+use App\Mail\ForgotPasswordMail;
 use App\Models\User;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Support\Str;
+use Mail;
 
 class ForgotPasswordController
 {
@@ -44,11 +46,12 @@ class ForgotPasswordController
         );
 
         // 4. Send email
+        Mail::to($email)
+            ->send(new ForgotPasswordMail($email, $token));
         // TODO: implementation. Generate a front-end url with the token
 
         return response()->json([
             'message' => 'If an account is associated with that email address, a password reset link has been sent. Please check your inbox.',
-            'tokenWillBeRemoveAndWIllBESentToEmail' => $token,
         ]);
     }
 
