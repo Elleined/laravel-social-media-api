@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UserRequest;
 use App\Http\Resources\UserResource;
+use App\Mail\WelcomeMail;
 use App\Models\User;
 use DB;
 use Gate;
 use Illuminate\Http\Request;
+use Mail;
 
 class AdminController
 {
@@ -45,7 +47,8 @@ class AdminController
             'created_by' => $request->user()->id, // Current is admin user
         ]);
 
-        // send welcome email
+        Mail::to($user->email)
+            ->send(new WelcomeMail($user->fullName()));
 
         return response()->json([
             'message' => 'User created successfully',

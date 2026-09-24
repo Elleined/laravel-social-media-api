@@ -13,10 +13,9 @@ class RegisterController
     public function register(UserRequest $request)
     {
         $user = User::create($request->validated());
-        $fullName = $user->first_name.' '.$user->last_name;
 
         Mail::to($user->email)
-            ->send(new WelcomeMail($fullName));
+            ->send(new WelcomeMail($user->fullName()));
 
         return response()->json([
             'message' => 'User created successfully',
