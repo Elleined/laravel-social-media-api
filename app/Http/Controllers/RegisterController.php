@@ -12,8 +12,24 @@ class RegisterController
 {
     public function register(UserRequest $request)
     {
-        $user = User::create($request->validated());
+        // Validate
+        $requestBody = $request->validated();
 
+        // Store the attachment
+        $path = null;
+        if ($request->filled('attachment')) {
+            $path = $request
+                ->file('attachment')
+                ->storePublicly('profiles', 'public');
+        }
+
+        // Save the user
+        $user = User::create([
+            ...$requestBody,
+            'attachment' => $path,
+        ]);
+
+        // Send welcome email
         Mail::to($user->email)
             ->send(new WelcomeMail($user->fullName()));
 

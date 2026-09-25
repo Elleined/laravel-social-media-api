@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CommentRequest extends FormRequest
 {
@@ -22,11 +23,12 @@ class CommentRequest extends FormRequest
      */
     public function rules(): array
     {
-        $isRequired = $this->isMethod('POST') ? 'required' : 'sometimes';
+        $isCreate = $this->isMethod('POST');
+        $isRequired = $isCreate ? 'required' : 'sometimes';
 
         return [
             'content' => ['bail', $isRequired, 'string'],
-            'attachment' => ['bail', 'required', 'file', 'image', 'extensions:jpeg,png,jpg,gif', 'mimes:jpeg,png,jpg,gif', 'max:3072'],
+            'attachment' => ['bail', Rule::excludeIf(! $isCreate), 'sometimes', 'nullable', 'file', 'image', 'extensions:jpeg,png,jpg,gif', 'mimes:jpeg,png,jpg,gif', 'max:3072'],
         ];
     }
 }

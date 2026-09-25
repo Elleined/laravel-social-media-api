@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class PostRequest extends FormRequest
 {
@@ -22,12 +23,13 @@ class PostRequest extends FormRequest
      */
     public function rules(): array
     {
-        $isRequired = $this->isMethod('POST') ? 'required' : 'sometimes';
+        $isCreate = $this->isMethod('POST');
+        $isRequired = $isCreate ? 'required' : 'sometimes';
 
         return [
             'title' => ['bail', $isRequired, 'string', 'max:100'],
             'content' => ['bail', $isRequired, 'string'],
-            'attachment' => ['bail', 'required', 'file', 'image', 'extensions:jpeg,png,jpg,gif', 'mimes:jpeg,png,jpg,gif', 'max:3072'],
+            'attachment' => ['bail', Rule::excludeIf(! $isCreate), 'sometimes', 'nullable', 'file', 'image', 'extensions:jpeg,png,jpg,gif', 'mimes:jpeg,png,jpg,gif', 'max:3072'],
         ];
     }
 }

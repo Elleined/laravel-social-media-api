@@ -37,9 +37,13 @@ class UserRequest extends FormRequest
             'first_name' => ['bail', $isRequired, 'string', 'max:50'],
             'last_name' => ['bail', $isRequired, 'string', 'max:50'],
             'email' => ['bail', $isRequired, 'string', 'max:50', 'ends_with:@gmail.com', $isEmailUnique],
-            'attachment' => ['bail', 'required', 'file', 'image', 'extensions:jpeg,png,jpg,gif', 'mimes:jpeg,png,jpg,gif', 'max:3072'],
-            'password' => ['bail', Rule::excludeIf(! $isCreate), 'required', 'string', 'confirmed', Password::defaults()], // Only required if http method is post
-            'is_admin' => ['bail', Rule::excludeIf(! ($currentUser && $currentUser->is_admin)), 'required',  'boolean'], // Only required if current user is admin
+
+            // Only available when user is admin. >eaning the even though its POST or PUT this will be available as long as the current user is admin
+            'is_admin' => ['bail', Rule::excludeIf(! ($currentUser && $currentUser->is_admin)), 'required',  'boolean'],
+
+            // Only available in POST
+            'attachment' => ['bail', Rule::excludeIf(! $isCreate), 'sometimes', 'nullable', 'file', 'image', 'extensions:jpeg,png,jpg,gif', 'mimes:jpeg,png,jpg,gif', 'max:3072'],
+            'password' => ['bail', Rule::excludeIf(! $isCreate), 'required', 'string', 'confirmed', Password::defaults()],
         ];
     }
 
