@@ -51,6 +51,11 @@ use Laravel\Sanctum\PersonalAccessToken;
  * @property-read mixed $is_active
  * @property-read Collection<int, PersonalAccessToken> $tokens
  * @property-read int|null $tokens_count
+ * @property string|null $created_by This field is only filled when an admin creates the user
+ * @property int $is_admin
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereCreatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereIsAdmin($value)
  *
  * @mixin \Eloquent
  */

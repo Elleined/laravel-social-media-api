@@ -27,7 +27,6 @@ class PostRequest extends FormRequest
         return [
             'title' => [$isRequired, 'string', 'max:100'],
             'content' => [$isRequired, 'string'],
-            'attachment' => ['sometimes', 'nullable', 'string', 'max:100', 'url'],
         ];
     }
 }
