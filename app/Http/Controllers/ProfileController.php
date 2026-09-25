@@ -60,13 +60,14 @@ class ProfileController
     {
         Gate::authorize('me', [User::class]);
 
-        $requestBody = $request->validated();
+        [
+            'password' => $password,
+            'revoke_current_session' => $revokeCurrentSession,
+            'revoke_other_session' => $revokeOtherSession
+
+        ] = $request->validated();
 
         $user = $request->user();
-
-        $password = $requestBody['password'];
-        $revokeCurrentSession = $request['revoke_current_session'];
-        $revokeOtherSession = $request['revoke_other_session'];
 
         DB::transaction(function () use ($user, $password, $revokeCurrentSession, $revokeOtherSession) {
             $user->update([

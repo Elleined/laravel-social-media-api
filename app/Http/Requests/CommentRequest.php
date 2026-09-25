@@ -25,8 +25,8 @@ class CommentRequest extends FormRequest
         $isRequired = $this->isMethod('POST') ? 'required' : 'sometimes';
 
         return [
-            'content' => [$isRequired, 'string'],
-            'attachment' => ['sometimes', 'nullable', 'string', 'max:100', 'url'],
+            'content' => ['bail', $isRequired, 'string'],
+            'attachment' => ['bail', 'required', 'file', 'image', 'extensions:jpeg,png,jpg,gif', 'mimes:jpeg,png,jpg,gif', 'max:3072'],
         ];
     }
 }

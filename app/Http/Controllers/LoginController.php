@@ -10,10 +10,10 @@ class LoginController
 {
     public function login(LoginRequest $request)
     {
-        $validated = $request->validated();
-
-        $email = $validated['email'];
-        $password = $validated['password'];
+        [
+            'email' => $email,
+            'password' => $password
+        ] = $request->validated();
 
         $user = User::withTrashed()
             ->where('email', '=', $email)

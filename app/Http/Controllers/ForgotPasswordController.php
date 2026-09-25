@@ -18,8 +18,9 @@ class ForgotPasswordController
     {
         // 1. Validate email input & check if user exists
         // Security practice: Return a generic message if user doesn't exist. to prevent email enumeration/probing attacks.
-        $requestBody = $request->validated();
-        $email = $requestBody['email'];
+        [
+            'email' => $email
+        ] = $request->validated();
 
         // 2. Check if the user has record in the password reset tokens table
         $existing = DB::table('password_reset_tokens')
@@ -59,14 +60,16 @@ class ForgotPasswordController
     {
         // 1. Validate email input & check if user exists
         // Security practice: Return a generic message if user doesn't exist. to prevent email enumeration/probing attacks.
-        $requestBody = $request->validated();
-        $token = $requestBody['token'];
-        $email = $requestBody['email'];
+        [
+            'token' => $token,
+            'email' => $email
+        ] = $request->validated();
 
         // Validate the token
-        $verification = $this->validateToken($email, $token);
-        $valid = $verification['valid'];
-        $message = $verification['message'];
+        [
+            'valid' => $valid,
+            'message' => $message
+        ] = $this->validateToken($email, $token);
 
         if (! $valid) {
             return response()->json([
@@ -80,15 +83,17 @@ class ForgotPasswordController
 
     public function resetPassword(ForgotPasswordChangeRequest $request)
     {
-        $requestBody = $request->validated();
-        $token = $requestBody['token'];
-        $email = $requestBody['email'];
-        $newPassword = $requestBody['new_password'];
+        [
+            'token' => $token,
+            'email' => $email,
+            'new_password' => $newPassword,
+        ] = $request->validated();
 
         // Validate the token
-        $verification = $this->validateToken($email, $token);
-        $valid = $verification['valid'];
-        $message = $verification['message'];
+        [
+            'valid' => $valid,
+            'message' => $message
+        ] = $this->validateToken($email, $token);
 
         if (! $valid) {
             return response()->json([

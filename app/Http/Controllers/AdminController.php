@@ -42,6 +42,7 @@ class AdminController
         Gate::authorize('create', [User::class]);
 
         $requestBody = $request->validated();
+
         $user = User::create([
             ...$requestBody,
             'created_by' => $request->user()->id, // Current is admin user

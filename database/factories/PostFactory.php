@@ -22,6 +22,7 @@ class PostFactory extends Factory
         return [
             'title' => fake()->sentence(),
             'content' => fake()->paragraph(),
+            'attachment' => fake()->optional()->word(),
             'deleted_at' => fake()->boolean() ? Carbon::parse(fake()->date()) : null,
             'author_id' => User::withTrashed()->pluck('id')->random(),
         ];

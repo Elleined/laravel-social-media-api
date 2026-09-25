@@ -25,8 +25,9 @@ class PostRequest extends FormRequest
         $isRequired = $this->isMethod('POST') ? 'required' : 'sometimes';
 
         return [
-            'title' => [$isRequired, 'string', 'max:100'],
-            'content' => [$isRequired, 'string'],
+            'title' => ['bail', $isRequired, 'string', 'max:100'],
+            'content' => ['bail', $isRequired, 'string'],
+            'attachment' => ['bail', 'required', 'file', 'image', 'extensions:jpeg,png,jpg,gif', 'mimes:jpeg,png,jpg,gif', 'max:3072'],
         ];
     }
 }

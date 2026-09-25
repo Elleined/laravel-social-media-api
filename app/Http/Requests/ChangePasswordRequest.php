@@ -25,10 +25,10 @@ class ChangePasswordRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'revoke_current_session' => ['required', 'boolean'],
-            'revoke_other_session' => ['required', 'boolean'],
-            'current_password' => ['required', 'string', 'current_password'],
-            'password' => ['required', 'string', 'different:current_password', 'confirmed', Password::defaults()],
+            'revoke_current_session' => ['bail', 'required', 'boolean'],
+            'revoke_other_session' => ['bail', 'required', 'boolean'],
+            'current_password' => ['bail', 'required', 'string', 'current_password'],
+            'password' => ['bail', 'required', 'string', 'different:current_password', 'confirmed', Password::defaults()],
         ];
     }
 
