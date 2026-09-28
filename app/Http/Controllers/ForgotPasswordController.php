@@ -65,12 +65,10 @@ class ForgotPasswordController
 
         // Validate the token
         $verification = $this->validateToken($email, $token);
-        $valid = $verification['valid'];
-        $message = $verification['message'];
 
-        if (! $valid) {
+        if (! $verification['valid']) {
             return response()->json([
-                'message' => $message,
+                'message' => $verification['message'],
             ], 422);
         }
 
@@ -87,12 +85,10 @@ class ForgotPasswordController
 
         // Validate the token
         $verification = $this->validateToken($email, $token);
-        $valid = $verification['valid'];
-        $message = $verification['message'];
 
-        if (! $valid) {
+        if (! $verification['valid']) {
             return response()->json([
-                'message' => $message,
+                'message' => $verification['message'],
             ], 422);
         }
 

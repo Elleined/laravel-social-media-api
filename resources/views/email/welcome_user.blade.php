@@ -4,18 +4,97 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome to {{ config('app.name') }}</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f4f6f8;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: #333333;
+        }
+        .wrapper {
+            background-color: #f4f6f8;
+            padding: 40px 0;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin: 0 auto;
+        }
+        .header {
+            background-color: #4f46e5;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            color: #ffffff;
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        .content {
+            padding: 40px 30px;
+        }
+        .content p {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .content p.first {
+            margin-top: 0;
+        }
+        .btn-wrapper {
+            margin: 30px auto;
+        }
+        .btn-cell {
+            border-radius: 6px;
+            background-color: #4f46e5;
+        }
+        .btn {
+            font-size: 16px;
+            font-family: inherit;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 6px;
+            padding: 12px 24px;
+            display: inline-block;
+            font-weight: 600;
+        }
+        .divider-container {
+            padding: 0 30px;
+        }
+        .divider {
+            border: none;
+            border-top: 1px solid #e5e7eb;
+            margin: 0;
+        }
+        .footer {
+            padding: 30px;
+            text-align: center;
+            background-color: #fafafa;
+            font-size: 13px;
+            color: #6b7280;
+        }
+        .footer p {
+            margin: 0 0 10px 0;
+        }
+        .footer p.last {
+            margin: 0;
+        }
+    </style>
 </head>
-<body style="margin: 0; padding: 0; background-color: #f4f6f8; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #333333;">
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #f4f6f8; padding: 40px 0;">
+<body>
+    <table class="wrapper" role="presentation" width="100%" cellspacing="0" cellpadding="0">
         <tr>
             <td align="center">
                 <!-- Main Container -->
-                <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);">
+                <table class="container" role="presentation" width="600" cellspacing="0" cellpadding="0">
                     
                     <!-- Header -->
                     <tr>
-                        <td style="background-color: #4f46e5; padding: 30px; text-align: center;">
-                            <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 700;">
+                        <td class="header">
+                            <h1>
                                 Welcome to {{ config('app.name') }}!
                             </h1>
                         </td>
@@ -23,19 +102,19 @@
 
                     <!-- Body Content -->
                     <tr>
-                        <td style="padding: 40px 30px;">
-                            <p style="font-size: 16px; line-height: 1.6; margin-top: 0;">
+                        <td class="content">
+                            <p class="first">
                                 Hi <strong>{{ $fullName }}</strong>,
                             </p>
-                            <p style="font-size: 16px; line-height: 1.6;">
+                            <p>
                                 We’re thrilled to have you on board! Your account has been created successfully, and you are ready to explore everything we have to offer.
                             </p>
 
                             <!-- CTA Button -->
-                            <table role="presentation" cellspacing="0" cellpadding="0" style="margin: 30px auto;">
+                            <table class="btn-wrapper" role="presentation" cellspacing="0" cellpadding="0">
                                 <tr>
-                                    <td align="center" style="border-radius: 6px; background-color: #4f46e5;">
-                                        <a href="{{ config('app.frontend.url') }}/login" target="_blank" style="font-size: 16px; font-family: inherit; color: #ffffff; text-decoration: none; border-radius: 6px; padding: 12px 24px; display: inline-block; font-weight: 600;">
+                                    <td class="btn-cell" align="center">
+                                        <a href="{{ config('app.frontend.url') }}/login" target="_blank" class="btn">
                                             Go to Login &rarr;
                                         </a>
                                     </td>
@@ -46,18 +125,18 @@
 
                     <!-- Divider -->
                     <tr>
-                        <td style="padding: 0 30px;">
-                            <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 0;">
+                        <td class="divider-container">
+                            <hr class="divider">
                         </td>
                     </tr>
 
                     <!-- Footer -->
                     <tr>
-                        <td style="padding: 30px; text-align: center; background-color: #fafafa; font-size: 13px; color: #6b7280;">
-                            <p style="margin: 0 0 10px 0;">
+                        <td class="footer">
+                            <p>
                                 You are receiving this email because you recently signed up for an account at {{ config('app.name') }}.
                             </p>
-                            <p style="margin: 0;">
+                            <p class="last">
                                 &copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.
                             </p>
                         </td>
