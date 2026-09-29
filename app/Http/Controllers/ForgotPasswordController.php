@@ -71,9 +71,9 @@ class ForgotPasswordController
             'message' => $message
         ] = $this->validateToken($email, $token);
 
-        if (! $verification['valid']) {
+        if (! $valid) {
             return response()->json([
-                'message' => $verification['message'],
+                'message' => $message,
             ], 422);
         }
 
@@ -95,9 +95,9 @@ class ForgotPasswordController
             'message' => $message
         ] = $this->validateToken($email, $token);
 
-        if (! $verification['valid']) {
+        if (! $valid) {
             return response()->json([
-                'message' => $verification['message'],
+                'message' => $message,
             ], 422);
         }
 
