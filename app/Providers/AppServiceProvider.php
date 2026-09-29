@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use Dedoc\Scramble\Scramble;
+use Dedoc\Scramble\Support\Generator\OpenApi;
+use Dedoc\Scramble\Support\Generator\SecurityScheme;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
@@ -39,5 +42,12 @@ class AppServiceProvider extends ServiceProvider
                 ->symbols()
                 ->uncompromised();
         });
+
+        Scramble::configure()
+            ->withDocumentTransformers(function (OpenApi $openApi) {
+                $openApi->secure(
+                    SecurityScheme::http('bearer')
+                );
+            });
     }
 }

@@ -60,35 +60,45 @@ class ProfileController
     {
         Gate::authorize('me', [User::class]);
 
-        $requestBody = $request->validated();
+        [
+            'password' => $password,
+            'revoke_current_session' => $revokeCurrentSession,
+            'revoke_other_session' => $revokeOtherSession
+        ] = $request->validated();
 
         $user = $request->user();
 
-        $password = $requestBody['password'];
-        $revokeCurrentSession = $request['revoke_current_session'];
-        $revokeOtherSession = $request['revoke_other_session'];
-
-        DB::transaction(function () use ($user, $password, $revokeCurrentSession, $revokeOtherSession) {
+        $message = DB::transaction(function () use ($user, $password, $revokeCurrentSession, $revokeOtherSession) {
+            // 1. Update the password securely (ensure it is hashed)
             $user->update([
                 'password' => $password,
             ]);
 
+            // 2. Handle token revocation combinations
             if ($revokeCurrentSession && $revokeOtherSession) {
                 $user->tokens()->delete();
-            } elseif ($revokeCurrentSession) {
-                $user->currentAccessToken()->delete();
-            } elseif ($revokeOtherSession) {
-                $currentTokenId = $user->currentAccessToken()->id;
-                $user->tokens()->where('id', '!=', $currentTokenId)->delete();
-            }
-        });
 
-        $message = match (true) {
-            $revokeCurrentSession && $revokeOtherSession => 'Password updated successfully. You have been logged out of all devices.',
-            $revokeCurrentSession => 'Password updated successfully. You have been logged out of this session.',
-            $revokeOtherSession => 'Password updated successfully. All other devices have been logged out.',
-            default => 'Password updated successfully.',
-        };
+                return 'Password updated successfully. You have been logged out of all devices.';
+            }
+
+            if ($revokeCurrentSession) {
+                $user->currentAccessToken()?->delete();
+
+                return 'Password updated successfully. You have been logged out of this session.';
+            }
+
+            if ($revokeOtherSession) {
+                $currentTokenId = $user->currentAccessToken()?->id;
+
+                $user->tokens()
+                    ->when($currentTokenId, fn ($query) => $query->where('id', '!=', $currentTokenId))
+                    ->delete();
+
+                return 'Password updated successfully. All other devices have been logged out.';
+            }
+
+            return 'Password updated successfully.';
+        });
 
         // TODO: Dispatch password updated email notification here
         return response()->json([

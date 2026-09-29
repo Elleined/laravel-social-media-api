@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('post_reactions', function (Blueprint $table) {
             $table->uuid('id')->primary()->default(DB::raw('(UUID())'));
             $table->timestamp('created_at')->useCurrent();
-            
+
             $table->foreignUuid('emoji_id')->constrained('ref_emojis');
             $table->foreignUuid('reactor_id')->constrained('users');
             $table->foreignUuid('post_id')->constrained('posts');
