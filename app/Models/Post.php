@@ -23,7 +23,6 @@ use Illuminate\Support\Carbon;
  * @property-read User|null $author
  * @property-read Collection<int, PostReaction> $reactions
  * @property-read int|null $reactions_count
- *
  * @method static \Database\Factories\PostFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post newQuery()
@@ -39,10 +38,8 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post withTrashed(bool $withTrashed = true)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post withoutTrashed()
- *
  * @property-read Collection<int, Comment> $comments
  * @property-read int|null $comments_count
- *
  * @mixin \Eloquent
  */
 class Post extends Model
