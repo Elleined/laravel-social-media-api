@@ -12,6 +12,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReferenceController;
 use App\Http\Controllers\RegisterController;
 use Illuminate\Support\Facades\Route;
+use Laravel\Socialite\Socialite;
 
 Route::get('', fn () => 'pong');
 
@@ -96,3 +97,15 @@ Route::middleware('auth:sanctum')
                     });
             });
     });
+
+Route::get('/auth/redirect/{provider}', function (ProviderType $providerType) {
+
+    return Socialite::driver($providerType)->redirect();
+});
+
+Route::get('/auth/callback/{provider}', function (ProviderType $providerType) {
+
+    $user = Socialite::driver($providerType)->user();
+
+    return $user;
+});

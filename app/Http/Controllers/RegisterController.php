@@ -12,6 +12,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Request;
 
 class RegisterController
 {
@@ -78,6 +79,22 @@ class RegisterController
                     'attachment' => $path,
                 ]);
             });
+
+            // ==========================================
+            // BLOCK 2: SECONDARY ACTIONS (Safe to fail)
+            // ==========================================
+            // We only reach here if Block 1 (the database transaction) succeeded.
+
+            // 5. Send welcome email (Fire and Forget)
+            $this->silentMail($user);
+
+            // ==========================================
+            // BLOCK 3: SUCCESS RESPONSE
+            // ==========================================
+            return response()->json([
+                'message' => 'User created successfully',
+                'data' => UserResource::make($user),
+            ], 201);
         } catch (Exception $e) {
             // 4. File Cleanup (Defense in Depth handled by FileService)
             $this->fileService->silentDelete($path);
@@ -86,22 +103,6 @@ class RegisterController
                 'message' => 'Registration failed. Changes were reverted.',
             ], 500);
         }
-
-        // ==========================================
-        // BLOCK 2: SECONDARY ACTIONS (Safe to fail)
-        // ==========================================
-        // We only reach here if Block 1 (the database transaction) succeeded.
-
-        // 5. Send welcome email (Fire and Forget)
-        $this->silentMail($user);
-
-        // ==========================================
-        // BLOCK 3: SUCCESS RESPONSE
-        // ==========================================
-        return response()->json([
-            'message' => 'User created successfully',
-            'data' => UserResource::make($user),
-        ], 201);
     }
 
     /**
@@ -110,6 +111,10 @@ class RegisterController
      */
     private function silentMail(User $user): void
     {
+        if (! $user) {
+            return;
+        }
+
         try {
             Mail::to($user->email)->send(new WelcomeMail($user->fullName()));
         } catch (Exception $e) {
