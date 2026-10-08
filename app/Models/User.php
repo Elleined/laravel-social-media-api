@@ -64,7 +64,7 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, HasUuids, Notifiable, SoftDeletes;
 
-    protected $fillable = ['first_name', 'last_name', 'email', 'password', 'attachment', 'is_admin'];
+    protected $fillable = ['name', 'first_name', 'last_name', 'email', 'password', 'attachment', 'is_admin'];
 
     /**
      * Get the attributes that should be cast.
@@ -76,6 +76,14 @@ class User extends Authenticatable
         return [
             'password' => 'hashed',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        // The 'saving' event triggers before both creating and updating
+        static::saving(function (User $user) {
+            $user->name = trim($user->first_name.' '.$user->last_name);
+        });
     }
 
     public function isDeleted(): bool

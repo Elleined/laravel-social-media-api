@@ -18,7 +18,6 @@ class DatabaseSeeder extends Seeder
             ProviderTypeSeeder::class,
             EmojiSeeder::class,
             UserSeeder::class,
-            SocialUserSeeder::class,
             PostSeeder::class,
             CommentSeeder::class,
         ]);

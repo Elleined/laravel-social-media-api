@@ -23,9 +23,13 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $firstName = fake()->firstName();
+        $lastName = fake()->lastName();
+
         return [
-            'first_name' => fake()->firstName(),
-            'last_name' => fake()->lastName(),
+            'first_name' => $firstName,
+            'last_name' => $lastName,
+            'name' => $firstName.' '.$lastName,
             'email' => fake()->bothify('??##??@gmail.com'),
             'password' => fake()->optional()->password(8),
             'attachment' => fake()->optional()->word(),
