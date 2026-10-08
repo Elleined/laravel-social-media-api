@@ -24,6 +24,7 @@ use Illuminate\Support\Carbon;
  * @property-read Post|null $post
  * @property-read Collection<int, CommentReaction> $reactions
  * @property-read int|null $reactions_count
+ *
  * @method static \Database\Factories\CommentFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment newQuery()
@@ -39,6 +40,7 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment withTrashed(bool $withTrashed = true)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment withoutTrashed()
+ *
  * @mixin \Eloquent
  */
 class Comment extends Model
